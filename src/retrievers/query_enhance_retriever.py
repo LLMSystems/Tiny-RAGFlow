@@ -36,9 +36,42 @@ the user overcome some of the limitations of the distance-based similarity searc
 擴展查詢：
 """
 
-
-
 QUERY_EXPAND_PROMPT_SINGLE_INTENT_DECOMPOSITION = """
+你是一個專精於查詢拆解的助理。你的任務是：
+- 分析使用者原始問題，判斷是否包含多個意圖。
+- 如果包含多個意圖，將其拆解成 {query_expand_number} 個「單一意圖」的子問題。
+- 如果原始問題只有單一意圖，則輸出空的 sub_questions 陣列。
+
+--- 規範 ---
+1. 每個子問題必須聚焦一個明確的意圖或需求。
+2. 子問題必須與原始問題語義相關，不做額外延伸。
+3. 保持自然語言表達，避免過度簡化或失去上下文。
+4. 如果判斷為單一意圖，sub_questions = []。
+
+--- 範例 ---
+原始問題：我想知道信用卡年費怎麼收？還有哪些條件可以免年費？
+輸出：
+{{
+    "original_query": "我想知道信用卡年費怎麼收？還有哪些條件可以免年費？",
+    "sub_questions": [
+        "信用卡年費的收取方式是什麼？",
+        "哪些條件可以免除信用卡年費？"
+    ]
+}}
+
+原始問題：信用卡年費怎麼收？
+輸出：
+{{
+    "original_query": "信用卡年費怎麼收？",
+    "sub_questions": []
+}}
+
+請根據以下原始問題產生拆解後的子問題，並以相同格式輸出：
+原始問題：{user_query}
+輸出：
+"""
+
+QUERY_EXPAND_PROMPT_SINGLE_INTENT_DECOMPOSITION_INPORTANCE = """
 你是一個專精於查詢拆解與意圖評估的助理。你的任務是：
 
 1. 分析使用者原始問題，判斷是否包含多個意圖。
@@ -481,9 +514,12 @@ class QueryEnhanceRetriever(BaseRetriever):
             prompt = QUERY_EXPAND_PROMPT_PARAPHRASE_EXPANSION.format(user_query=query, query_expand_number=self.query_expand_number)
             key0 = "expanded_queries"
         elif self.query_expansion_method == "sub_question":
-            prompt = QUERY_EXPAND_PROMPT_SINGLE_INTENT_DECOMPOSITION.format(user_query=query, query_expand_number=self.query_expand_number)
             key0 = "sub_questions"
-            key1 = "importance_ratio"
+            if self.query_fusion_method == "rrf":
+                prompt = QUERY_EXPAND_PROMPT_SINGLE_INTENT_DECOMPOSITION.format(user_query=query, query_expand_number=self.query_expand_number)
+            else:
+                prompt = QUERY_EXPAND_PROMPT_SINGLE_INTENT_DECOMPOSITION_INPORTANCE.format(user_query=query, query_expand_number=self.query_expand_number)
+                key1 = "importance_ratio"
         elif self.query_expansion_method == "hyde":
             prompt = QUERY_EXPAND_PROMPT_HYDE_EXPANSION.format(user_query=query, query_expand_number=self.query_expand_number)
             key0 = "expanded_queries"
@@ -494,13 +530,17 @@ class QueryEnhanceRetriever(BaseRetriever):
         raw_response = self._normalize_json_response(raw_response)
         response = json.loads(raw_response)[key0]
         if key1:
-            importanve_ratios = json.loads(raw_response)[key1]
-            if len(response) != len(importanve_ratios):
+            importance_ratios = json.loads(raw_response)[key1]
+            if len(response) != len(importance_ratios):
                 self.logger.warning("Length of expanded queries and importance ratios do not match.")
-                importanve_ratios = [1.0 / len(response)] * len(response)
+                importance_ratios = [1.0 / len(response)] * len(response)
         else:
-            importanve_ratios = [1.0 / len(response)] * len(response)
-        return response, importanve_ratios
+            # 處理response = [] 的情況，len=0時避免除以0錯誤
+            if len(response) == 0:
+                importance_ratios = []
+            else:
+                importance_ratios = [1.0 / len(response)] * len(response)
+        return response, importance_ratios
 
     def _normalize_json_response(self, response: str) -> str:
         if not response:
