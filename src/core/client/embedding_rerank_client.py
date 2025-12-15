@@ -1,5 +1,5 @@
 import logging
-
+import asyncio
 import yaml
 from openai import AsyncOpenAI
 import httpx
@@ -60,9 +60,14 @@ class RerankingModel(BaseModel):
             self.local_base_url = self.model_config['local_base_url'] + "/rerank"
             self.logger.info(f'[RerankingModel] Initializing Model: {reranking_model}')
             self.client_type = 'vllm'
-            self.headers = {
-            "Content-Type": "application/json"
-            }
+            timeout = httpx.Timeout(30.0)
+            self.http_client = httpx.AsyncClient(
+                timeout=timeout,
+                http2=True,
+                headers={
+                    "Content-Type": "application/json"
+                }
+            )
         else:
             super().__init__('reranking_models', reranking_model, config_path)
             self.client_type = 'openai'
@@ -82,11 +87,16 @@ class RerankingModel(BaseModel):
                 "query": query,
                 "documents": [input]
                 }
-            async with httpx.AsyncClient() as client:
-                    response = await client.post(self.local_base_url, headers=self.headers, json=payload)
+
+            try:
+                async with asyncio.timeout(35.0):
+                    response = await self.http_client.post(self.local_base_url, headers=self.http_client.headers, json=payload)
                     json_response = response.json()
                     results = json_response.get('results', [])[0]
-                    return [results.get('relevance_score')]
+                    return results.get('relevance_score')
+            except asyncio.TimeoutError:
+                self.logger.error("Request to reranking model timed out.")
+                raise
             
     async def rerank_documents(self, documents=None, query=None):
         if self.client_type == 'openai':
@@ -104,13 +114,18 @@ class RerankingModel(BaseModel):
                 "query": query,
                 "documents": [doc for doc in documents]
                 }
-            async with httpx.AsyncClient() as client:
-                response = await client.post(self.local_base_url, headers=self.headers, json=payload)
-                json_response = response.json()
-                results = json_response.get('results', [])
-                sorted_results = sorted(results, key=lambda item: item.get('index'))
-                scores = [result.get('relevance_score') for result in sorted_results]
-                return scores
+            
+            try:
+                async with asyncio.timeout(35.0):
+                    response = await self.http_client.post(self.local_base_url, headers=self.http_client.headers, json=payload)
+                    json_response = response.json()
+                    results = json_response.get('results', [])
+                    sorted_results = sorted(results, key=lambda item: item.get('index'))
+                    scores = [result.get('relevance_score') for result in sorted_results]
+                    return scores
+            except asyncio.TimeoutError:
+                self.logger.error("Request to reranking model timed out.")
+                raise
 
 class MultiVectorModel():
     def __init__(self, model_path: str):
@@ -118,7 +133,12 @@ class MultiVectorModel():
         self.logger = self._setup_logger()
         self.logger.info(f'Initializing MultiVector Model from: {model_path}')
         from fastembed import LateInteractionTextEmbedding
-        self.embedding_model = LateInteractionTextEmbedding(model_path)
+        self.embedding_model = LateInteractionTextEmbedding(
+            model_path, 
+            cache_dir="./models",
+            cuda=True,
+            device_ids=[0],
+        )
     
     def _setup_logger(self) -> logging.Logger:
         logger = logging.getLogger(self.__class__.__name__)
