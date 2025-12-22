@@ -29,10 +29,13 @@ class RetrievalCacheManager:
         return self.cache.get(key)
 
     async def set(self, key, config, results):
+        self.cache[key] = {
+            "config": config,
+            "results": results
+        }
+        await self._save()
+
+    async def _save(self):
         async with self.lock:
-            self.cache[key] = {
-                "config": config,
-                "results": results
-            }
             with open(self.cache_file, "w", encoding="utf-8") as f:
                 json.dump(self.cache, f, ensure_ascii=False, indent=2)
