@@ -4,6 +4,8 @@ import yaml
 from openai import AsyncOpenAI
 import httpx
 
+import torch
+from transformers import AutoTokenizer, AutoModel
 
 class BaseModel:
     def __init__(self, model_type, model_name, config_path='./configs/models.yaml'):
@@ -48,6 +50,38 @@ class EmbeddingModel(BaseModel):
         )
         embs =  [response.data[i].embedding for i in range(len(response.data))]
         return embs
+
+class LocalEmbeddingModel:
+    def __init__(self, model_path: str):
+        self.model_path = model_path
+        self.logger = self._setup_logger()
+        self.logger.info(f'Initializing LocalEmbedding Model from: {model_path}')
+        self.tokenizer = AutoTokenizer.from_pretrained(model_path)
+        self.transformer_model = AutoModel.from_pretrained(model_path).to("cuda" if torch.cuda.is_available() else "cpu")
+    
+    def _setup_logger(self) -> logging.Logger:
+        logger = logging.getLogger(self.__class__.__name__)
+        if not logger.handlers:
+            handler = logging.StreamHandler()
+            formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+            handler.setFormatter(formatter)
+            logger.addHandler(handler)
+            logger.setLevel(logging.INFO)
+        return logger
+    
+    async def embed_query(self, query=None):
+        inputs = self.tokenizer([query], padding=True, truncation=True, return_tensors="pt").to(self.transformer_model.device)
+        with torch.no_grad():
+            outputs = self.transformer_model(**inputs)
+        embeddings = outputs.last_hidden_state.mean(dim=1)
+        return embeddings.cpu().tolist()[0]
+    
+    async def embed_documents(self, documents=None):
+        inputs = self.tokenizer(documents, padding=True, truncation=True, return_tensors="pt").to(self.transformer_model.device)
+        with torch.no_grad():
+            outputs = self.transformer_model(**inputs)
+        embeddings = outputs.last_hidden_state.mean(dim=1)
+        return embeddings.cpu().tolist()
 
 class RerankingModel(BaseModel):
     def __init__(self, reranking_model, config_path='./llm_tools/configs/models.yaml'):
