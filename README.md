@@ -1,10 +1,13 @@
+# <div align="center"> Tiny-RAGFlow </div>
+
 <div align="center" xmlns="http://www.w3.org/1999/html">
+
+
+Tiny-RAGFlow is a lightweight Retrieval-Augmented Generation (RAG) framework designed for quickly building efficient vector retrieval systems. This project does not rely on external databases and supports multiple mainstream retrieval backends, including `faiss`, `bm25`, and `qdrant`, offering both single-vector and multi-vector hybrid retrieval capabilities. Whether handling single queries or complex multi-intent analysis, Tiny-RAGFlow efficiently completes tasks through its flexible configuration and reranker modules. Its modular architecture allows developers to freely combine retrieval strategies and models based on their needs, catering to a wide range of application scenarios.
 
 [English](README.md) | [中文](README_zh.md)
 
 </div>
-
-Tiny-RAGFlow is a lightweight Retrieval-Augmented Generation (RAG) framework designed for quickly building efficient vector retrieval systems. This project does not rely on external databases and supports multiple mainstream retrieval backends, including `faiss`, `bm25`, and `qdrant`, offering both single-vector and multi-vector hybrid retrieval capabilities. Whether handling single queries or complex multi-intent analysis, Tiny-RAGFlow efficiently completes tasks through its flexible configuration and reranker modules. Its modular architecture allows developers to freely combine retrieval strategies and models based on their needs, catering to a wide range of application scenarios.
 
 ## Architecture
 ```mermaid

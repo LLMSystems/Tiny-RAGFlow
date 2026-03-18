@@ -1,4 +1,10 @@
+# <div align="center"> Tiny-RAGFlow </div>
+
+<div align="center" xmlns="http://www.w3.org/1999/html">
+
 Tiny-RAGFlow 是一個輕量級的檢索增強生成（RAG）框架，專為快速搭建高效的向量檢索系統而設計。此專案無需依賴外部資料庫，並支援多種主流的檢索後端，包括 `faiss`、`bm25` 和 `qdrant`，提供單向量與多向量的混合檢索能力。無論是處理單一查詢還是進行複雜的多意圖分析，Tiny-RAGFlow 都能透過其靈活的配置和 reranker 模組高效完成任務。其模組化的架構允許開發者根據需求自由組合檢索策略與模型，適用於多樣化的應用場景。
+
+</div>
 
 ## 架構
 ```mermaid
