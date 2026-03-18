@@ -396,11 +396,6 @@ bge-reranker-base:
   api_base: "http://localhost:8001/v1"
   api_key: "your-api-key"
 
-# 範例：直接使用 Hugging Face 模型 (由 fastembed 處理)
-bge-large-en-v1.5:
-  model_name: "BAAI/bge-large-en-v1.5"
-  # 不需要 api_base，系統會自動從 Hugging Face 下載
-
 # 範例：連接到 Jina AI 的服務
 jina-reranker-v1-turbo-en:
   model_name: "jina-reranker-v1-turbo-en"

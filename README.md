@@ -1,6 +1,6 @@
 <div align="center" xmlns="http://www.w3.org/1999/html">
 
-[English](README.md) | [中文](README_zh-CN.md)
+[English](README.md) | [中文](README_zh.md)
 
 </div>
 
@@ -401,11 +401,6 @@ bge-reranker-base:
   model_name: "bge-reranker-base"
   api_base: "http://localhost:8001/v1"
   api_key: "your-api-key"
-
-# Example: Using a Hugging Face model directly (handled by fastembed)
-bge-large-en-v1.5:
-  model_name: "BAAI/bge-large-en-v1.5"
-  # No api_base needed; the system will download it from Hugging Face automatically
 
 # Example: Connecting to Jina AI's service
 jina-reranker-v1-turbo-en:
