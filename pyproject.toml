@@ -1,0 +1,33 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "tiny-ragflow"
+version = "0.1.0"
+description = "A tiny RAGFlow project."
+authors = [
+    { name = "Max" },
+    { name = "Eddie" }
+]
+readme = "README.md"
+requires-python = ">=3.8,<4.0"
+
+dependencies = [
+    "PyYAML",
+    "openai",
+    "opencc-python-reimplemented",
+    "numpy<2",
+    "faiss-cpu",
+    "jieba",
+    "rank_bm25",
+    "qdrant_client",
+    "fastembed-gpu",
+    "ckip_transformers",
+    "torch",
+]
+
+
+
+[tool.setuptools.packages.find]
+where = ["src"]
