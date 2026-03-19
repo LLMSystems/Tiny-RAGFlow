@@ -1,3 +1,8 @@
+
+<div align="center">
+    <img src="assets/tinyRAGflow.png" alt="TinyRAGFlow Architecture" style="max-width: 100%; height: auto;"/>
+</div>
+
 <div align="center" xmlns="http://www.w3.org/1999/html">
 
 [English](README.md) | [中文](README_zh.md)
