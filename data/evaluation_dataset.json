@@ -1,0 +1,42 @@
+[
+    {
+        "query": "I lost my credit card, what should I do?",
+        "ground_truth_ids": [2, 3]
+    },
+    {
+        "query": "How can I get a higher credit card spending limit?",
+        "ground_truth_ids": [4]
+    },
+    {
+        "query": "Explain how revolving interest works",
+        "ground_truth_ids": [5]
+    },
+    {
+        "query": "How do I apply for a credit card?",
+        "ground_truth_ids": [1]
+    },
+    {
+        "query": "Which service charges apply when using ATM?",
+        "ground_truth_ids": [7]
+    },
+    {
+        "query": "How long does a bank loan approval take?",
+        "ground_truth_ids": [8]
+    },
+    {
+        "query": "What's the difference between credit and personal loan?",
+        "ground_truth_ids": [9]
+    },
+    {
+        "query": "How do I change my online banking password?",
+        "ground_truth_ids": [6]
+    },
+    {
+        "query": "Tell me about credit card rewards",
+        "ground_truth_ids": [3]
+    },
+    {
+        "query": "Where can I check exchange rates?",
+        "ground_truth_ids": [10]
+    }
+]

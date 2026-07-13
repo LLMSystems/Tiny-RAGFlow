@@ -1,0 +1,16 @@
+PyYAML
+openai
+opencc-python-reimplemented
+numpy # "numpy<2" for faiss-gpu compatibility
+faiss-cpu # faiss-gpu
+jieba
+rank_bm25
+qdrant_client
+fastembed-gpu
+ckip_transformers
+torch
+
+
+# cuda12 + cudnn8 的話。如果直接裝 onnxruntime-gpu 會失敗，因為她會去找 cudnn9，1.18.0 版(下面的來源)才支援 cuda12 + cudnn8，直接 install 1.18.0 一樣會失敗
+# pip install onnxruntime-gpu==1.18.0 --index-url https://aiinfra.pkgs.visualstudio.com/PublicPackages/_packaging/onnxruntime-cuda-12/pypi/simple/
+# pip install "numpy<2" --force-reinstall

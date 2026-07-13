@@ -1,0 +1,23 @@
+dimension: 128
+
+index:
+  mode: "multivector" # dense / multivector
+  normalize: true
+  type: "HNSW"  # Flat / HNSW
+  distance: "COSINE"
+  hnsw:
+    enabled: true
+    m: 32
+    ef_construct: 40
+    full_scan_threshold: 1000
+    max_indexing_threads: 0
+    on_disk: false
+  quantization:
+    enabled: false
+    type: "int8"
+    quantile: 0.99
+  multivector:
+    comparator: "MAX_SIM"
+paths:
+  storage_path: "data/qdrant_dense_storage"
+  collection_name: "dense_index"

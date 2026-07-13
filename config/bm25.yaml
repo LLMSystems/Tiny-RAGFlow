@@ -1,0 +1,23 @@
+index_path: "./data/bm25_index.pkl"
+
+params:
+    k1: 1.2
+    b: 0.75
+    epsilon: 0.25
+
+tokenizer:
+    type: "jieba"        # 或 "ckip"
+    mode: "search"       # 或 "precise"
+    user_dict_path: "./config/tokenizer/user_dict.txt"
+    stopwords_path: "./config/tokenizer/stopwords.txt"
+
+    normalize:
+      lower: true                
+      fullwidth_to_halfwidth: true
+      remove_punctuation: true
+      strip_whitespace: true
+      remove_emoji: true
+
+    filter:
+      drop_empty_token: true
+      min_token_length: 1

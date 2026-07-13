@@ -1,0 +1,18 @@
+dimension: 768
+
+index:
+  normalize: true      # true / false
+  type: "FlatIP"           # FlatL2 / FlatIP / IVF / IVF_PQ / HNSW
+  metric: "ip"             # ip (inner product) / l2
+  ivf:
+    nlist: 1
+  ivfpq:
+    nlist: 1
+    M: 1
+  hnsw:
+    M: 32
+    efSearch: 32
+    efConstruction: 40
+paths:
+  index_path: "data/index_test.faiss"
+  metadata_path: "data/metadata_test.pkl"

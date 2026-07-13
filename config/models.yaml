@@ -1,0 +1,49 @@
+params:
+    default:
+        temperature: 0.2
+        max_tokens: 1000
+        top_p: 1
+        frequency_penalty: 1.4
+        presence_penalty: 0
+
+LLM_engines:
+    gpt-4o:
+        model: "gpt-4o"
+        azure_api_base: "your_azure_api_base_url"
+        azure_api_key: "your_azure_api_key"
+        azure_api_version: "your_azure_api_version"
+    Qwen2-7B-Instruct:
+        model: "Qwen2-7B-Instruct"
+        local_api_key: "Empty"
+        local_base_url: "your_local_base_url"
+        translate_to_cht: True # optional, whether to translate the input to Chinese Traditional
+    Qwen1.5-14B-Chat:
+        model: "Qwen1.5-14B-Chat"
+        local_api_key: "Empty"
+        local_base_url: "your_local_base_url"
+        translate_to_cht: True # optional, whether to translate the input to Chinese Traditional
+    Qwen1.5-1.8B-Chat-GPTQ-Int4:
+        model: "Qwen1.5-14B-Chat"
+        local_api_key: "Empty"
+        local_base_url: "your_local_base_url"
+        translate_to_cht: True # optional, whether to translate the input to Chinese Traditional
+
+embedding_models:
+    m3e-base:
+        model: "m3e-base"
+        local_api_key: "Empty"
+        local_base_url: "http://localhost:8887/v1"
+    bge-m3:
+        model: "bge-m3"
+        local_api_key: "Empty"
+        local_base_url: "your_local_base_url"
+
+reranking_models:
+    bge-reranker-large:
+        model: "bge-reranker-large"
+        local_api_key: "Empty"
+        local_base_url: "your_local_base_url"
+    bge-reranker-base:
+        model: "bge-reranker-base"
+        local_api_key: "Empty"
+        local_base_url: "http://localhost:8887/v1"

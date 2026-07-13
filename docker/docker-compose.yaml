@@ -1,0 +1,20 @@
+version: "3.9"
+
+services:
+    tiny-rag:
+        image: cuda121-cudnn8-python311:latest
+        container_name: tiny-rag
+        command: tail -f /dev/null
+        environment:
+            - NVIDIA_VISIBLE_DEVICES=all
+        volumes:
+            - /etc/localtime:/etc/localtime:ro
+            - /home/max:/app
+        working_dir: /app
+        deploy:
+            resources:
+                reservations:    
+                    devices:
+                        - driver: nvidia
+                          capabilities: [gpu]
+        restart: unless-stopped
